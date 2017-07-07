@@ -222,6 +222,7 @@
 		var values = [];
 		ref.on('value', (function (element) {return function (snap) {
 			var data = snap.val() || {};
+			console.info('data', data);
 			values.push(data)
 			var comment = data.comment;
 			var done = data.done;
@@ -233,6 +234,7 @@
 			}
 		}})(element));
 		element.find('.done').click(function (event) {
+			console.info('send');
 			var target = $(event.target);
 			var key = target.parent().attr('data-key')
 			database.ref(key).update({'done': target.is(':checked')})
