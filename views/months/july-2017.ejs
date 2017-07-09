@@ -5,6 +5,7 @@
 		<h1>July</h1>
 		<h2>I will fast everyday</h2>
 		<h3>Rules:</h3>
+		<div class="debug"></div>
 		<ul>
 			<li>Twice a week: eat breakfast only (up to 10 am).</li>
 			<li>Remaining 5 days: eat within 8 hour period (e.g. First mouthfull at 9am last mouthfull at 5pm).</li>
@@ -182,6 +183,17 @@
 		</div>
 	</div>
 </body>
+<script>
+	/**
+	 * Console for mobile
+	 *
+	 */
+	function Log(message) {
+		var pre = document.createElement('pre')
+		pre.innerText = message;
+		document.querySelector('.debug').appendChild(pre)
+	}
+</script>
 <script
   src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
   integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
@@ -212,17 +224,18 @@
 	thisDate.setMonth(thisMonth)
 	thisDate.setYear(thisYear)
 
+
 	var elements = [];
 	for (var i = 0; i < daysInMonth(thisDate); i ++) {
 		var day = i + 1;
 		var dayString = day < 10 ? '0' + day : day.toString();
 		var key = `log/${dayString}-july-2017`
 		var ref = database.ref(key)
-		var element = $('div[id="' + key + '"');
+		var element = $('div[id="' + key + '"]');
 		var values = [];
 		ref.on('value', (function (element) {return function (snap) {
 			var data = snap.val() || {};
-			console.info('data', data);
+			console.info('data: ', data);
 			values.push(data)
 			var comment = data.comment;
 			var done = data.done;
@@ -246,6 +259,5 @@
 		})
 		elements.push(element)
 	}
-	console.info(values);
 </script>
 </html>
