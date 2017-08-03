@@ -25,37 +25,30 @@ function init(options) {
 		var day = i + 1;
 		var dayString = day < 10 ? '0' + day : day.toString();
 		var key = 'log/' + dayString + '-' + thisMonthName + '-' + thisYear
-		console.info('🗝', key);
 		var ref = database.ref(uid + '/' + key)
 		var element = $('div[id="' + key + '"]');
-		ref.on('value', (function (element) {return function (snap) {
-			var data = snap.val() || {};
-			values.push(data)
-			var comment = data.comment;
-			var done = data.done;
-			if (done) {
-				element.find('.done').attr('checked', 'checked')
-			}
-			if (comment) {
-				element.find('.comment').val(comment)
-			}
-		}})(element));
+
+		ref.on('value', bindOnValue({element: element}));
+
 		element.find('.done').click(function (event) {
 			console.info('send');
 			var target = $(event.target);
 			var key = target.parent().attr('data-key')
 			database.ref(uid + '/' + key).update({'done': target.is(':checked')})
 		})
+
 		element.find('.comment').on('change', function (event) {
 			var target = $(event.target);
 			var key = target.parent().attr('data-key')
 			database.ref(uid + '/' + key).update({'comment': target.val()})
 		})
+
 		elements.push(element)
 	}
-	setTimeout(function () {
-		console.info('data', values);
-	}, 3000);
+
+	// setTimeout(function () {
+	// 	console.info('data', values);
+	// }, 3000);
 
 	// Set title
 	$('title').text(thisMonthNamePascal + ' ' + thisYear + ' - Everyday I Will For One Month')
@@ -70,4 +63,31 @@ function facebookLogin() {
 
 function onFacebookLoginStatus(response) {
 	console.info(response);
+}
+
+function bindOnValue(options) {
+	var element = options.element;
+
+	return function (snap) {
+		var data = snap.val() || {};
+		var comment = data.comment;
+		var done = data.done;
+		if (done) {
+			Entry.setDone(element)
+		}
+		if (comment) {
+			Entry.setComment(element)
+		}
+	}
+}
+
+/* All methods take element as first arg */
+var Entry = {
+	setDone: function (element) {
+		element.find('.done').attr('checked', 'checked')
+	},
+
+	setComment: function (element) {
+		element.find('.comment').val(comment)
+	},
 }
