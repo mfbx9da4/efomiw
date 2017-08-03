@@ -25,9 +25,8 @@ function init(options) {
 		var day = i + 1;
 		var dayString = day < 10 ? '0' + day : day.toString();
 		var key = 'log/' + dayString + '-' + thisMonthName + '-' + thisYear
-		var dbKey = uid + '/' + key
 		console.info('🗝', key);
-		var ref = database.ref(key)
+		var ref = database.ref(uid + '/' + key)
 		var element = $('div[id="' + key + '"]');
 		ref.on('value', (function (element) {return function (snap) {
 			var data = snap.val() || {};
