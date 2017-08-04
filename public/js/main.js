@@ -1,6 +1,8 @@
+
+
 function init(options) {
 	console.info('hey ☺️');
-	var thisMonth = options.thisMonth
+	var thisMonth = options.thisMonth - 1
 	var thisMonthName = options.thisMonthName
 	var thisYear = options.thisYear
 	var uid = options.uid
@@ -15,18 +17,32 @@ function init(options) {
 	                    anyDateInMonth.getMonth()+1,
 	                    0).getDate();}
 
-	var thisDate = new Date()
+	function isSameDay(date1, date2) {
+		return date1.toDateString() === date2.toDateString()
+	}
+
+
+	var today = new Date();
+	var thisDate = new Date();
 	thisDate.setMonth(thisMonth)
 	thisDate.setYear(thisYear)
 
 	var elements = [];
 	var values = [];
 	for (var i = 0; i < daysInMonth(thisDate); i ++) {
+		var _date = new Date()
+		_date.setMonth(thisMonth)
+		_date.setYear(thisYear)
+		_date.setDate(i + 1)
 		var day = i + 1;
 		var dayString = day < 10 ? '0' + day : day.toString();
 		var key = 'log/' + dayString + '-' + thisMonthName + '-' + thisYear
 		var ref = database.ref(uid + '/' + key)
 		var element = $('div[id="' + key + '"]');
+
+		if (isSameDay(today, _date)) {
+			Entry.setActive(element)
+		}
 
 		ref.on('value', bindOnValue({element: element}));
 
@@ -45,10 +61,6 @@ function init(options) {
 
 		elements.push(element)
 	}
-
-	// setTimeout(function () {
-	// 	console.info('data', values);
-	// }, 3000);
 
 	// Set title
 	$('title').text(thisMonthNamePascal + ' ' + thisYear + ' - Everyday I Will For One Month')
@@ -76,7 +88,7 @@ function bindOnValue(options) {
 			Entry.setDone(element)
 		}
 		if (comment) {
-			Entry.setComment(element)
+			Entry.setComment(element, comment)
 		}
 	}
 }
@@ -87,7 +99,11 @@ var Entry = {
 		element.find('.done').attr('checked', 'checked')
 	},
 
-	setComment: function (element) {
+	setComment: function (element, comment) {
 		element.find('.comment').val(comment)
 	},
+
+	setActive: function (element) {
+		element.css({fontWeight: 'bold'})
+	}
 }
